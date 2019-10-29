@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (C) 2017 TypeFox and others.
+ * Copyright (C) 2020 Ericsson and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -14,15 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import { ContainerModule } from 'inversify';
-import { WindowService } from '../../browser/window/window-service';
-import { ElectronWindowService } from './electron-window-service';
-import { FrontendApplicationContribution } from '../../browser/frontend-application';
-import { ElectronClipboardService } from '../electron-clipboard-service';
-import { ClipboardService } from '../../browser/clipboard-service';
-
-export default new ContainerModule(bind => {
-    bind(WindowService).to(ElectronWindowService).inSingletonScope();
-    bind(FrontendApplicationContribution).toService(WindowService);
-    bind(ClipboardService).to(ElectronClipboardService).inSingletonScope();
-});
+/**
+ * Name of the channel used with `ipcMain.on/emit`.
+ */
+export const ELECTRON_IPC_CHANNEL_NAME = 'theia-json-rpc';

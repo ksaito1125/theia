@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (C) 2017 TypeFox and others.
+ * Copyright (C) 2019 RedHat and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -14,26 +14,20 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
+import { clipboard } from 'electron';
 import { injectable } from 'inversify';
-import { ipcRenderer } from 'electron';
-import { NewWindowOptions } from '../../browser/window/window-service';
-import { DefaultWindowService } from '../../browser/window/default-window-service';
+
+import { ClipboardService } from '@theia/core/lib/browser/clipboard-service';
 
 @injectable()
-export class ElectronWindowService extends DefaultWindowService {
+export class ElectronClipboardService implements ClipboardService {
 
-    openNewWindow(url: string, { external }: NewWindowOptions = {}): undefined {
-        if (external) {
-            ipcRenderer.send('open-external', url);
-        } else {
-            ipcRenderer.send('create-new-window', url);
-        }
-        return undefined;
+    readText(): string {
+        return clipboard.readText();
     }
 
-    protected preventUnload(event: BeforeUnloadEvent): string | void {
-        // The user will be shown a confirmation dialog by the will-prevent-unload handler in the Electron main script
-        event.returnValue = false;
+    writeText(value: string): void {
+        clipboard.writeText(value);
     }
 
 }
