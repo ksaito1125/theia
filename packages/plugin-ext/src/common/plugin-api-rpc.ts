@@ -79,6 +79,8 @@ import { SymbolInformation } from 'vscode-languageserver-types';
 import { ArgumentProcessor } from '../plugin/command-registry';
 import { MaybePromise } from '@theia/core/lib/common/types';
 import { QuickTitleButton } from '@theia/core/lib/common/quick-open-model';
+import * as files from '../common/files';
+import { VSBuffer } from '../common/buffer';
 
 export interface PreferenceData {
     [scope: number]: any;
@@ -1347,27 +1349,40 @@ export interface DebugMain {
 }
 
 export interface FileSystemExt {
-    $stat(handle: number, resource: UriComponents): Promise<FileStat>;
-    $readDirectory(handle: number, resource: UriComponents): Promise<[string, FileType][]>;
-    $createDirectory(handle: number, uri: UriComponents): Promise<void>;
-    $readFile(handle: number, resource: UriComponents, options?: { encoding?: string }): Promise<string>;
-    $writeFile(handle: number, resource: UriComponents, content: string, options?: { encoding?: string }): Promise<void>;
-    $delete(handle: number, resource: UriComponents, options: { recursive: boolean }): Promise<void>;
-    $rename(handle: number, source: UriComponents, target: UriComponents, options: { overwrite: boolean }): Promise<void>;
-    $copy(handle: number, source: UriComponents, target: UriComponents, options: { overwrite: boolean }): Promise<void>;
+    $stat(handle: number, resource: UriComponents): Promise<files.IStat>;
+    $readdir(handle: number, resource: UriComponents): Promise<[string, files.FileType][]>;
+    $readFile(handle: number, resource: UriComponents): Promise<VSBuffer>;
+    $writeFile(handle: number, resource: UriComponents, content: VSBuffer, opts: files.FileWriteOptions): Promise<void>;
+    $rename(handle: number, resource: UriComponents, target: UriComponents, opts: files.FileOverwriteOptions): Promise<void>;
+    $copy(handle: number, resource: UriComponents, target: UriComponents, opts: files.FileOverwriteOptions): Promise<void>;
+    $mkdir(handle: number, resource: UriComponents): Promise<void>;
+    $delete(handle: number, resource: UriComponents, opts: files.FileDeleteOptions): Promise<void>;
+    $watch(handle: number, session: number, resource: UriComponents, opts: files.IWatchOptions): void;
+    $unwatch(handle: number, session: number): void;
+    $open(handle: number, resource: UriComponents, opts: files.FileOpenOptions): Promise<number>;
+    $close(handle: number, fd: number): Promise<void>;
+    $read(handle: number, fd: number, pos: number, length: number): Promise<VSBuffer>;
+    $write(handle: number, fd: number, pos: number, data: VSBuffer): Promise<number>;
+}
+
+export interface IFileChangeDto {
+    resource: UriComponents;
+    type: files.FileChangeType;
 }
 
 export interface FileSystemMain {
-    $stat(uri: UriComponents): Promise<FileStat>
-    $readDirectory(uri: UriComponents): Promise<[string, FileType][]>;
-    $createDirectory(uri: UriComponents): Promise<void>
-    $readFile(uri: UriComponents): Promise<string>;
-    $writeFile(uri: UriComponents, content: string): Promise<void>;
-    $delete(uri: UriComponents, options: { recursive: boolean }): Promise<void>;
-    $rename(source: UriComponents, target: UriComponents, options: { overwrite: boolean }): Promise<void>;
-    $copy(source: UriComponents, target: UriComponents, options: { overwrite: boolean }): Promise<void>;
-    $registerFileSystemProvider(handle: number, scheme: string): void;
+    $registerFileSystemProvider(handle: number, scheme: string, capabilities: files.FileSystemProviderCapabilities): void;
     $unregisterProvider(handle: number): void;
+    $onFileSystemChange(handle: number, resource: IFileChangeDto[]): void;
+
+    $stat(uri: UriComponents): Promise<files.IStat>;
+    $readdir(resource: UriComponents): Promise<[string, files.FileType][]>;
+    $readFile(resource: UriComponents): Promise<VSBuffer>;
+    $writeFile(resource: UriComponents, content: VSBuffer): Promise<void>;
+    $rename(resource: UriComponents, target: UriComponents, opts: files.FileOverwriteOptions): Promise<void>;
+    $copy(resource: UriComponents, target: UriComponents, opts: files.FileOverwriteOptions): Promise<void>;
+    $mkdir(resource: UriComponents): Promise<void>;
+    $delete(resource: UriComponents, opts: files.FileDeleteOptions): Promise<void>;
 }
 
 export interface ClipboardMain {

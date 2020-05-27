@@ -35,7 +35,7 @@ import { TasksMainImpl } from './tasks-main';
 import { StorageMainImpl } from './plugin-storage';
 import { LanguagesContributionMainImpl } from './languages-contribution-main';
 import { DebugMainImpl } from './debug/debug-main';
-import { FileSystemMainImpl } from './file-system-main';
+import { FileSystemMainImpl } from './file-system-main-impl';
 import { ScmMainImpl } from './scm-main';
 import { DecorationsMainImpl } from './decorations/decorations-main';
 import { ClipboardMainImpl } from './clipboard-main';

@@ -90,6 +90,23 @@ function doEqualsIgnoreCase(a: string, b: string, stopAt = a.length): boolean {
 }
 
 /**
+ * @returns the length of the common prefix of the two strings.
+ */
+export function commonPrefixLength(a: string, b: string): number {
+
+    let i: number;
+    const len = Math.min(a.length, b.length);
+
+    for (i = 0; i < len; i++) {
+        if (a.charCodeAt(i) !== b.charCodeAt(i)) {
+            return i;
+        }
+    }
+
+    return len;
+}
+
+/**
  * Escapes regular expression characters in a given string
  */
 export function escapeRegExpCharacters(value: string): string {
@@ -124,4 +141,79 @@ export function escapeInvisibleChars(value: string): string {
 
 export function unescapeInvisibleChars(value: string): string {
     return value.replace(/\\n/g, '\n').replace(/\\r/g, '\r');
+}
+
+export function compare(a: string, b: string): number {
+    if (a < b) {
+        return -1;
+    } else if (a > b) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+export function compareSubstring(a: string, b: string, aStart: number = 0, aEnd: number = a.length, bStart: number = 0, bEnd: number = b.length): number {
+    for (; aStart < aEnd && bStart < bEnd; aStart++, bStart++) {
+        const codeA = a.charCodeAt(aStart);
+        const codeB = b.charCodeAt(bStart);
+        if (codeA < codeB) {
+            return -1;
+        } else if (codeA > codeB) {
+            return 1;
+        }
+    }
+    const aLen = aEnd - aStart;
+    const bLen = bEnd - bStart;
+    if (aLen < bLen) {
+        return -1;
+    } else if (aLen > bLen) {
+        return 1;
+    }
+    return 0;
+}
+
+export function compareIgnoreCase(a: string, b: string): number {
+    return compareSubstringIgnoreCase(a, b, 0, a.length, 0, b.length);
+}
+
+export function compareSubstringIgnoreCase(a: string, b: string, aStart: number = 0, aEnd: number = a.length, bStart: number = 0, bEnd: number = b.length): number {
+
+    for (; aStart < aEnd && bStart < bEnd; aStart++, bStart++) {
+
+        const codeA = a.charCodeAt(aStart);
+        const codeB = b.charCodeAt(bStart);
+
+        if (codeA === codeB) {
+            // equal
+            continue;
+        }
+
+        const diff = codeA - codeB;
+        if (diff === 32 && isUpperAsciiLetter(codeB)) { // codeB =[65-90] && codeA =[97-122]
+            continue;
+
+        } else if (diff === -32 && isUpperAsciiLetter(codeA)) {  // codeB =[97-122] && codeA =[65-90]
+            continue;
+        }
+
+        if (isLowerAsciiLetter(codeA) && isLowerAsciiLetter(codeB)) {
+            //
+            return diff;
+
+        } else {
+            return compareSubstring(a.toLowerCase(), b.toLowerCase(), aStart, aEnd, bStart, bEnd);
+        }
+    }
+
+    const aLen = aEnd - aStart;
+    const bLen = bEnd - bStart;
+
+    if (aLen < bLen) {
+        return -1;
+    } else if (aLen > bLen) {
+        return 1;
+    }
+
+    return 0;
 }

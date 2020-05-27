@@ -51,7 +51,7 @@ import { PluginDebugSessionContributionRegistry } from './debug/plugin-debug-ses
 import { PluginDebugService } from './debug/plugin-debug-service';
 import { DebugService } from '@theia/debug/lib/common/debug-service';
 import { PluginSharedStyle } from './plugin-shared-style';
-import { FSResourceResolver } from './file-system-main';
+import { FSResourceResolver } from './file-system-main-impl';
 import { SelectionProviderCommandContribution } from './selection-provider-command';
 import { ViewColumnService } from './view-column-service';
 import { ViewContextKeyService } from './view/view-context-key-service';
